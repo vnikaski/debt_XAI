@@ -13,7 +13,7 @@ parser.add_argument('--dataPath', type=str, default='temat_3_dane.csv')
 parser.add_argument('--descPath', type=str, default='temat_3_opis_zmiennych.csv')
 parser.add_argument('--savePath', type=str, default=None)
 parser.add_argument('--leaveCodeNames', action='store_false')
-parser.add_argument('--testSize', type=float, default=0.3)
+parser.add_argument('--testSize', type=float, default=0.1)
 
 args = parser.parse_args()
 
