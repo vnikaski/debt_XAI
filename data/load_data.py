@@ -1,10 +1,12 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from preprocessors.new_feats import new_feats
 
 
 def load_data(datapath: str, descpath: str, test_size: float, namevars=True):
     df = pd.read_csv(datapath)
-    if namevars:
+    df = new_feats(df)
+    if not namevars:
         desc = pd.read_csv(descpath, sep=';')
         df[desc['OPIS'].values] = df
         df = df.drop(columns=desc['NAZWA'].values)
