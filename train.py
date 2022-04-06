@@ -14,16 +14,17 @@ parser.add_argument('--descPath', type=str, default='temat_3_opis_zmiennych.csv'
 parser.add_argument('--savePath', type=str, default=None)
 parser.add_argument('--leaveCodeNames', action='store_false')
 parser.add_argument('--testSize', type=float, default=0.1)
+parser.add_argument('--osRate', type=float, default=1) # 1 = no oversampling, 2 = twice as many, etc
+parser.add_argument('--usRate', type=float, default=1) # 1 = no undersampling, 2 = half of neg samples, etc
 
 args = parser.parse_args()
 
-preprocesses = make_preprocessor(args.prep)
+X, y, X_test, y_test = load_data(args.dataPath, args.descPath, args.testSize, args.leaveCodeNames)
+preprocesses = make_preprocessor(args.prep, args.osRate, args.usRate, y.sum()/(len(y)-y.sum()))
 model = make_model(args.classifier)
 
 pipe_steps = preprocesses.append(('model', model))
 pipe = Pipeline(pipe_steps)
-
-X, y, X_test, y_test = load_data(args.dataPath, args.descPath, args.testSize, args.leaveCodeNames)
 
 pipe.fit(X, y)
 
