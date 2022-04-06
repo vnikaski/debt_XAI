@@ -42,5 +42,5 @@ def new_feats(df):
             new_df[f"{new_feat}01"] = temp[:, 0] / temp[:, 1]
             new_df[f"{new_feat}12"] = temp[:, 1] / temp[:, 2]
             
-    return pd.DataFrame(new_df)
+    return pd.DataFrame(new_df), df.Y # df.iloc[:,1:]
     
