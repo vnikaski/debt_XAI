@@ -1,5 +1,5 @@
 import argparse
-from sklearn.pipeline import Pipeline
+from imblearn.pipeline import Pipeline
 
 from data.load_data import load_data
 from models.make_model import make_model
@@ -37,8 +37,8 @@ model = make_model(model_type=args.classifier,
                    n_estimatiors=args.nEstimators,
                    max_depth=args.maxDepth,
                    class_weight=args.classWeight)
-
-pipe_steps = preprocesses.append(('model', model))
+preprocesses.append(('model', model))
+pipe_steps=preprocesses
 pipe = Pipeline(pipe_steps)
 
 pipe.fit(X, y)
