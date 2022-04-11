@@ -5,19 +5,24 @@ from imblearn.pipeline import Pipeline
 from sklearn.metrics import f1_score
 from sklearn.model_selection import cross_val_score
 
-
-from data.load_data import load_data
-from models.make_model import make_model
-from preprocessors.make_preprocessor import make_preprocessor
+from src.visualization.visualize import plot_3d_PCA, plot_2d_PCA, plot_corr
+from src.data.load_data import load_data
+from src.models.make_model import make_model
+from src.preprocessors.make_preprocessor import make_preprocessor
+import src.features.make_feats as make_feats
+dic_method = make_feats.dic_method
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--prep', choices=['ROS', 'SMOTE', 'RUS', 'normalize', 'pca', 'svd'], nargs="+")
 parser.add_argument('classifier', choices=['lr', 'rf', 'gb'])
-parser.add_argument('--dataPath', type=str, default='temat_3_dane.csv')
-parser.add_argument('--descPath', type=str, default='temat_3_opis_zmiennych.csv')
+parser.add_argument('--dataPath', type=str, default='data/temat_3_dane.csv')
+parser.add_argument('--descPath', type=str, default='data/temat_3_opis_zmiennych.csv')
+parser.add_argument('--makeFeatsMethod', type=str, default='lin', choices=list(dic_method.keys()))
 parser.add_argument('--savePath', type=str, default=None)
-parser.add_argument('--leaveCodeNames', action='store_false')
+parser.add_argument('--leaveCodeNames', action='store_true')
+parser.add_argument('--oldFeats', action='store_true')
+parser.add_argument('--propFeats', action='store_true')
 parser.add_argument('--testSize', type=float, default=0.1)
 parser.add_argument('--osRate', type=float, default=1) # 1 = no oversampling, 2 = twice as many, etc
 parser.add_argument('--usRate', type=float, default=1) # 1 = no undersampling, 2 = half of neg samples, etc
@@ -29,8 +34,16 @@ parser.add_argument('--classWeight', type=str, choices=['balanced, balanced_subs
 
 args = parser.parse_args()
 
-X, y, X_test, y_test = load_data(args.dataPath, args.descPath, args.testSize)
 
+for m in list(dic_method.keys()):
+    for p in [True, False]:
+        X, y, X_test, y_test = load_data(args.dataPath, args.descPath, args.testSize, args.leaveCodeNames, m, p)
+        plot_corr(X, y, m, p)
+
+X, y, X_test, y_test = load_data(args.dataPath, args.descPath, args.testSize, args.leaveCodeNames, args.makeFeatsMethod, args.propFeats)     
+plot_3d_PCA(X, y, args.makeFeatsMethod, args.propFeats)
+plot_2d_PCA(X, y, args.makeFeatsMethod, args.propFeats)
+plot_corr(X, y, args.makeFeatsMethod, args.propFeats)
 preprocesses = make_preprocessor(processes=args.prep,
                                  os_rate=args.osRate,
                                  us_rate=args.usRate,
