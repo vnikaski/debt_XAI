@@ -20,6 +20,18 @@ dic_feat = {'Kids': [['X1', 'X2', 'X3'], ['X64', 'X65', 'X66'], ['X169', 'X170',
        'All_prop': [['X281', 'X282', 'X283'], ['X22', 'X23', 'X24']]
       }
 
+def income_stability(a,b,c): #If 1 month 3 months and 6 months are not deflecting in more than 45%
+    if 3*a>0.55*b and 3*a<1.45*b and 2*b>0.55*c and 2*b<1.45*c:
+        return 0
+    else:
+        return 1
+
+def salary_stability(a,b,c): #If 1 month 3 months and 6 months are not deflecting in more than 45%
+    if 3*a>0.55*b and 3*a<1.45*b and 2*b>0.55*c and 2*b<1.45*c:
+        return 0
+    else:
+        return 1
+
 def div_feat(temp, **kwargs):
 
     temp[temp == 0] = 0.0099
@@ -45,6 +57,7 @@ def lin_feat(temp, **kwargs):
 def three_feat(temp, **kwargs):
 
     return temp
+
 
 dic_method = {'div': div_feat, 'sub': sub_feat, 'lin': lin_feat, 'old': None, 'three': three_feat}
 
@@ -78,5 +91,6 @@ def make_feats(df, method, prop):
                     new_df[col] /= REC[:, int(col[-1])]
                 elif 'All_prop' not in col:
                     new_df[col] /= EXP[:, int(col[-1])]
-
+        #new_df["Income_Unstability"] = df.apply(lambda x: income_stability(x["X281"], x["X282"],x["X283"]), axis = 1)
+        #new_df["Salary_Unstability"] = df.apply(lambda x: salary_stability(x["X288"], x["X289"],x["X290"]), axis = 1)
         return pd.DataFrame(new_df)

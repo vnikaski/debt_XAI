@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 from features.make_feats import make_feats
 import warnings
 
-
 def load_data(datapath: str, descpath: str, test_size: float, namevars: bool, make_feats_method: str, propFeats: bool):
     warnings.filterwarnings('ignore', category=pd.errors.PerformanceWarning)
     df = pd.read_csv(datapath)
