@@ -16,16 +16,16 @@ def make_preprocessor(processes: List[str], os_rate: float, us_rate: float, cur_
 
     if processes is None:
         return []
-
+    sampling_strategy = 3/7
     preps = []
     if 'ROS' in processes:
-        preps.append(('ROS', RandomOverSampler(sampling_strategy=cur_ratio * os_rate, random_state=0)))
+        preps.append(('ROS', RandomOverSampler(sampling_strategy=sampling_strategy, random_state=0)))
         cur_ratio = cur_ratio * os_rate
     if 'SMOTE' in processes:
-        preps.append(('SMOTE', SMOTE(sampling_strategy=cur_ratio * os_rate, random_state=0)))
+        preps.append(('SMOTE', SMOTE(sampling_strategy=sampling_strategy, random_state=0)))
         cur_ratio = cur_ratio * os_rate
     if 'RUS' in processes:
-        preps.append(('RUS', RandomUnderSampler(sampling_strategy=cur_ratio * us_rate, random_state=0)))
+        preps.append(('RUS', RandomUnderSampler(sampling_strategy=sampling_strategy, random_state=0)))
     if 'normalize' in processes: # not sure if normalizer would work in the pipeline
         preps.append(('Normalizer', Normalizer(norm='l2')))
     if 'pca' in processes:
