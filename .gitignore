@@ -1,0 +1,7 @@
+.ipynb_checkpoints/
+data/
+*.out
+*.ipynb
+/**/__pycache__/
+RUN_ALL
+.gitignore
