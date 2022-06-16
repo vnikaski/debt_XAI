@@ -7,10 +7,11 @@ from imblearn.pipeline import Pipeline
 from sklearn.metrics import f1_score, confusion_matrix
 from sklearn.model_selection import cross_val_score
 
-from src.visualization.visualize import plot_3d_PCA, plot_2d_PCA, plot_corr, plot_roc
+# from src.visualization.visualize import plot_3d_PCA, plot_2d_PCA, plot_corr, plot_roc
 from src.data.load_data import load_data
 from src.models.make_model import make_model
 from src.preprocessors.make_preprocessor import make_preprocessor
+from src.explenations.explain import explain_permutation_importance
 import src.features.make_feats as make_feats
 dic_method = make_feats.dic_method
 parser = argparse.ArgumentParser()
@@ -44,12 +45,12 @@ print(name)
 os.makedirs(f'reports/figures/{name}', exist_ok=True)
 
 X, y, X_test, y_test = load_data(args.dataPath, args.descPath, args.testSize, args.leaveCodeNames, args.makeFeatsMethod, args.propFeats)     
-
+"""
 if args.visualize:
     plot_3d_PCA(X, y, name)
     plot_2d_PCA(X, y, name)
     plot_corr(X, y, name)
-    
+"""
 preprocesses = make_preprocessor(processes=args.prep,
                                  os_rate=args.osRate,
                                  us_rate=args.usRate,
@@ -74,9 +75,11 @@ pipe.fit(X, y)
 probs = pipe.predict_proba(X_test)
 preds = (probs[:, 1] > args.threshold) * 1
 
+"""
 if args.visualize:
     plot_roc(probs, y_test, name)
-    
+"""
+
 scores_test = f1_score(y_test, preds)
 print(f"TEST f1 score {scores_test}\n\n")
 tn, fp, fn, tp = confusion_matrix(y_test, preds).ravel()
@@ -89,6 +92,10 @@ sens = tp / (tp + fn)
 print("SPEC", spec)
 print("SENS", sens)
 
+print("\n\nTRAIN")
+explain_permutation_importance(pipe, X, y)
+print("\nTEST")
+explain_permutation_importance(pipe, X_test, y_test)
 
 # saving the model
 if args.savePath is not None:
